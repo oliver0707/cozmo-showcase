@@ -1,0 +1,7 @@
+{ 
+    "Let_COZMO_run":
+    {
+        "Script": "./build/COZMO.paramters.Jenkinsfile",
+        "TriggerOnPush" : false
+    }
+}

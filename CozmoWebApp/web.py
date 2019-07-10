@@ -14,6 +14,24 @@ def index():
     _obs.trigger("drive", dist, webhook)
     return "ok"
 
+@app.route("/turn", methods=['GET'])
+def index_turn():
+    angle = request.args.get('angle')
+    webhook = request.args.get('webhook')
+    print("angle: ", angle)
+    print("webhook: ", webhook)
+    _obs.trigger("turn", int(float(angle)), webhook)
+    return "ok"
+
+@app.route('/speak', methods=['GET'])
+def speak():
+    text = request.args.get('text')
+    webhook = request.args.get('webhook')
+    print("text: ", text)
+    print("webhook: ", webhook)
+    _obs.trigger("speak", text, webhook)
+    return "ok"
+
 @app.route('/command/<string:command>/<string:argument>', methods=['GET'])
 def command1(command, argument):
     _obs.trigger("command1", command, argument)

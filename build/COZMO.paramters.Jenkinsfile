@@ -6,6 +6,7 @@ pipeline {
         // Input paramter pro stage
     parameters {
         string(name: 'drive_straight_1', defaultValue: '0', description: 'positive value in mm to drive forward')
+        string(name: 'turn_around_1', defaultValue: '0', description: 'positive or negative value in degrees')
     }
     stages {
         stage('drive_straight_1') {
@@ -22,6 +23,21 @@ pipeline {
                 echo "Webhook called with data: ${data}"
             }
         }
+        stage('turn_around_1') {
+            steps {
+                // Webhook
+                script {hook = registerWebhook()}
+                echo "Waiting for POST to ${hook.getURL()}"
+
+                // COZMO call
+                echo "Turning around for ${params.turn_around_1} degrees"
+                httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/turn?angle=${params.turn_around_1}&webhook=${hook.getURL()}"
+
+                // Wait for webhook
+                script {data = waitForWebhook hook}
+                echo "Webhook called with data: ${data}"
+            }
+        }
     }
     post {
         always {
@@ -32,7 +48,7 @@ pipeline {
 
             //httpRequest responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/speak?text=Ichbinfertig&webhook=${hook.getURL()}"
 
-            httpRequest ignoreSslErrors: true, responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/shutdown"
+             httpRequest ignoreSslErrors: true, responseHandle: 'NONE', httpMode: 'GET', url: "http://localhost:5000/shutdown"
             // Wait for webhook
             //script {data = waitForWebhook hook}
             //echo "Webhook called with data: ${data}"
